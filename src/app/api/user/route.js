@@ -61,6 +61,15 @@ export async function PUT(req) {
 
     const body = await req.json();
 
+    const allowedRoles = ["Donor", "Volunteer", "Sponsor", "Beneficiary"];
+
+    if (!allowedRoles.includes(body.memberType)) {
+      return NextResponse.json(
+        { message: "Invalid member type" },
+        { status: 400 }
+      );
+    }
+
     const updatedUser = await User.findByIdAndUpdate(
       session.user.id,
       {
@@ -68,7 +77,6 @@ export async function PUT(req) {
           name: body.name,
           phone: body.phone,
           address: body.address,
-          image: body.image,
           memberType: body.memberType,
         },
       },

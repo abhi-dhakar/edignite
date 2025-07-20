@@ -24,7 +24,7 @@ const SponsorshipSchema = new mongoose.Schema(
     frequency: {
       type: String,
       enum: ["One-Time", "Monthly", "Yearly"],
-      default: "Monthly",
+      default: "One-Time",
     },
 
     startDate: {

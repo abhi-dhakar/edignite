@@ -15,12 +15,14 @@ const UserSchema = new mongoose.Schema(
 
     password: {
       type: String,
-    }, 
+    },
 
     image: {
       type: String,
-    }, 
-
+    },
+    imagePublicId: {
+      type: String,
+    },
     phone: {
       type: String,
     },
@@ -32,7 +34,7 @@ const UserSchema = new mongoose.Schema(
     memberType: {
       type: String,
       enum: ["Donor", "Volunteer", "Sponsor", "Beneficiary", "Admin"],
-      default: "Donor",
+      default: "Volunteer",
     },
 
     donations: [
@@ -51,7 +53,7 @@ const UserSchema = new mongoose.Schema(
 
     volunteerProfile: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Volunteer",
+      ref: "Volunteer", 
     },
 
     eventRegistrations: [

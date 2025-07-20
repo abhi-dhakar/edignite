@@ -13,11 +13,15 @@ const StorySchema = new mongoose.Schema(
     },
 
     image: {
-      type: String, // Optional: story-related image URL
+      type: String,
+    },
+    
+    imagePublicId: {
+      type: String,
     },
 
     authorName: {
-      type: String, // Optional: person whose story it is
+      type: String,
     },
 
     date: {
@@ -27,7 +31,7 @@ const StorySchema = new mongoose.Schema(
 
     postedBy: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User", // Optional: Admin or volunteer who submitted the story
+      ref: "User",
     },
   },
   { timestamps: true }

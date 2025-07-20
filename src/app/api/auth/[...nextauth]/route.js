@@ -3,6 +3,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import dbConnect from "@/lib/dbConnect";
 import User from "@/models/User.model";
 import bcryptjs from "bcryptjs";
+import { signinSchema } from "@/lib/validations/signinSchema";
 
 export const authOptions = {
   providers: [
@@ -21,16 +22,25 @@ export const authOptions = {
       async authorize(credentials) {
         await dbConnect();
 
-        const { email, password } = credentials;
+        // Validate using Zod
+        const result = signinSchema.safeParse(credentials);
+        if (!result.success) {
+          const errorMessages = result.error.flatten().fieldErrors;
+          throw new Error(
+            errorMessages.email?.[0] ||
+              errorMessages.password?.[0] ||
+              "Invalid input"
+          );
+        }
 
-      
+        const { email, password } = result.data;
+
         const user = await User.findOne({ email });
 
         if (!user) {
           throw new Error("No user found with this email");
         }
 
-   
         const isPasswordValid = await bcryptjs.compare(password, user.password);
 
         if (!isPasswordValid) {

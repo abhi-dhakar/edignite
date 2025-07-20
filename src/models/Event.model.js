@@ -21,7 +21,11 @@ const EventSchema = new mongoose.Schema(
     },
 
     image: {
-      type: String, // Optional: Event banner or photo URL
+      type: String,
+    },
+    
+    imagePublicId: {
+      type: String,
     },
 
     registeredUsers: [

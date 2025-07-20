@@ -25,7 +25,7 @@ const MessageSchema = new mongoose.Schema(
 
     submittedBy: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User", // Optional: if a logged-in user submits the message
+      ref: "User", 
     },
   },
   { timestamps: true }
