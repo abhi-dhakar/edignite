@@ -1,20 +1,18 @@
 import { getToken } from "next-auth/jwt";
 import { NextResponse } from "next/server";
 
-// protected routes → need any signed-in user
 const protectedRoutes = [
-  "/dashboard",
-  "/api/donation",
+  "/api/user-message",
+  "/api/donations",
+  "/api/notifications",
   "/api/sponsorship",
-  // "/api/volunteer",
   "/api/user",
-  "/api/events/register", 
+  "/api/events/register",
+  "/api/user-volunteer/",
 ];
 
-//api/upload/upload-profile-image is public api
-
-// admin-only routes
 const adminRoutes = [
+  "/admin",
   "/admin/dashboard",
   "/admin/users",
   "/admin/users/create",
@@ -31,18 +29,15 @@ const adminRoutes = [
   "/admin/messages",
   "/admin/stories",
   "/admin/stories/create",
+  "/admin/notifications",
 ];
-
-// public GET, admin for other methods
-const mixedAccessRoutes = {
-  "/api/media": ["GET"],
-};
 
 export async function middleware(req) {
   const { pathname } = req.nextUrl;
   const method = req.method;
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
 
+  // Special case: Event registration (requires login)
   if (pathname === "/api/events/register") {
     if (!token) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
@@ -50,36 +45,24 @@ export async function middleware(req) {
     return NextResponse.next();
   }
 
-  //  Handle mixed access routes
-  for (const [route, allowedMethods] of Object.entries(mixedAccessRoutes)) {
-    if (pathname.startsWith(route)) {
-      if (allowedMethods.includes(method)) {
-        return NextResponse.next();
-      }
-      if (!token || token.memberType !== "Admin") {
-        return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-      }
-      return NextResponse.next();
-    }
-  }
-
-  //  If protected route, require login
+  // Handle protected routes (any authenticated user)
   if (protectedRoutes.some((route) => pathname.startsWith(route))) {
     if (!token) {
       return NextResponse.redirect(new URL("/signin", req.url));
     }
   }
 
-  // If admin route, require admin access
+  // Handle admin-only routes
   if (adminRoutes.some((route) => pathname.startsWith(route))) {
     if (!token || token.memberType !== "Admin") {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
   }
 
+  // Default: allow
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/api/:path*", "/admin/:path*"],
+  matcher: ["/", "/api/:path*", "/admin/:path*"],
 };

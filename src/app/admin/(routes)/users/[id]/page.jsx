@@ -155,6 +155,7 @@ export default function UserEditPage() {
       // Update local state with the updated user
       setUser(result.user);
       toast.success("User updated successfully");
+      router.push("/admin/users")
     } catch (error) {
       console.error("Error updating user:", error);
       toast.error(error.message || "Failed to update user");

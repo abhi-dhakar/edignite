@@ -115,7 +115,8 @@ export default function VolunteerProfilePage() {
 
   if (status === "unauthenticated") {
     return (
-      <div className="max-w-md mx-auto mt-10 p-6 bg-red-50 border border-red-200 rounded-lg text-center">
+     <div className="min-h-screen flex justify-center items-center">
+       <div className="max-w-md mx-auto mb-14 p-6 bg-red-50 border border-red-200 rounded-lg text-center">
         <p className="text-red-600 font-medium">
           Please sign in to access your volunteer profile
         </p>
@@ -128,6 +129,7 @@ export default function VolunteerProfilePage() {
           </Link>
         </div>
       </div>
+     </div>
     );
   }
 
