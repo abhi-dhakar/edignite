@@ -16,9 +16,12 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "Edignite | Empowering Lives",
+  title: "Edignite NGO",
   description:
     "NGO focused on education, healthcare, women empowerment, and environmental sustainability.",
+  icons: {
+    icon: "/images.png",
+  },
 };
 
 export default function RootLayout({ children }) {

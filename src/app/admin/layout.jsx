@@ -7,6 +7,9 @@ import { Toaster } from "sonner"
 export const metadata = {
   title: "Admin Panel",
   description: "Secure admin dashboard for managing your NGO",
+   icons: {
+    icon: "/images.png",
+  },
 }
 
 
