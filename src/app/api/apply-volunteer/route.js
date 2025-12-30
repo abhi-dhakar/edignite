@@ -62,6 +62,13 @@ export async function POST(request) {
 
     const volunteer = await Volunteer.create({
       user: user._id,
+      fullName: body.fullName,
+      emailAddress: body.emailAddress,
+      mobileNumber: body.mobileNumber,
+      enrollmentNumber: body.enrollmentNumber,
+      branch: body.branch,
+      division: body.division,
+      year: body.year,
       skills: body.skills || [],
       availability: body.availability || "",
       experience: body.experience || "",
@@ -69,16 +76,16 @@ export async function POST(request) {
       status: "Pending",
     });
 
-     user.volunteerProfile = volunteer._id;
-     await user.save();
+    user.volunteerProfile = volunteer._id;
+    await user.save();
 
-  await sendNotification({
-    userId: user._id,
-    title: "Volunteer Application Submitted",
-    message: `Thank you ${user.name} for applying as a volunteer. Your application is now under review.`,
-    type: "info",
-    link: "/volunteer",
-  });
+    await sendNotification({
+      userId: user._id,
+      title: "Volunteer Application Submitted",
+      message: `Thank you ${user.name} for applying as a volunteer. Your application is now under review.`,
+      type: "info",
+      link: "/volunteer",
+    });
 
     return NextResponse.json(
       { message: "Volunteer profile created", volunteer },
@@ -113,6 +120,13 @@ export async function PUT(request) {
     const volunteer = await Volunteer.findOneAndUpdate(
       { user: user._id },
       {
+        fullName: body.fullName,
+        emailAddress: body.emailAddress,
+        mobileNumber: body.mobileNumber,
+        enrollmentNumber: body.enrollmentNumber,
+        branch: body.branch,
+        division: body.division,
+        year: body.year,
         skills: body.skills,
         availability: body.availability,
         experience: body.experience,

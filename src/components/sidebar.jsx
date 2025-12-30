@@ -13,6 +13,7 @@ import {
   UserPlus,
   HeartHandshake,
   Bell,
+  BookOpen,
 } from "lucide-react";
 
 const navItems = [
@@ -25,6 +26,7 @@ const navItems = [
   { href: "/admin/media", label: "Media", icon: Image },
   { href: "/admin/messages", label: "Messages", icon: Mail },
   { href: "/admin/stories", label: "Stories", icon: Newspaper },
+  { href: "/admin/blogs", label: "Blogs", icon: BookOpen },
   { href: "/admin/notifications", label: "Notifications", icon: Bell },
 ];
 
@@ -46,11 +48,10 @@ export function Sidebar() {
             <Link
               key={item.href}
               href={item.href}
-              className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                isActive
-                  ? "bg-primary text-white"
-                  : "text-gray-700 hover:bg-gray-100"
-              }`}
+              className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${isActive
+                ? "bg-primary text-white"
+                : "text-gray-700 hover:bg-gray-100"
+                }`}
             >
               <item.icon className="w-5 h-5" />
               {item.label}

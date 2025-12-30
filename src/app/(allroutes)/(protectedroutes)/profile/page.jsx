@@ -4,7 +4,7 @@ import { useSession } from 'next-auth/react';
 import { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import Image from 'next/image';
-import { User, Camera, Loader2 } from 'lucide-react';
+import { User, Camera, Loader2, Calendar, CreditCard, ExternalLink, CalendarDays } from 'lucide-react';
 
 export default function ProfilePage() {
   const { data: session, status } = useSession();
@@ -14,7 +14,7 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(false);
   const [imageLoading, setImageLoading] = useState(false);
   const fileInputRef = useRef(null);
-  
+
   const [imagePreview, setImagePreview] = useState(null);
 
   useEffect(() => {
@@ -23,7 +23,7 @@ export default function ProfilePage() {
         const res = await axios.get('/api/user');
         setProfile(res.data.user);
         setFormData(res.data.user);
-        
+
         if (res.data.user.image) {
           setImagePreview(res.data.user.image);
         }
@@ -44,46 +44,46 @@ export default function ProfilePage() {
   const handleImageChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    
+
     // Validate file size and type
     if (file.size > 5 * 1024 * 1024) {
       alert('Image must be less than 5MB');
       return;
     }
-    
+
     if (!file.type.startsWith('image/')) {
       alert('Please select an image file');
       return;
     }
-    
+
     // Create a preview
     setImagePreview(URL.createObjectURL(file));
-    
+
     // Upload immediately if in edit mode
     if (editMode) {
       await uploadImage(file);
     }
   };
-  
+
   // Upload image to server
   const uploadImage = async (file) => {
     setImageLoading(true);
     try {
       const formData = new FormData();
       formData.append('image', file);
-      
+
       const res = await axios.post('/api/user/upload-image', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
       });
-      
+
       // Update form data with new image URL
       setFormData(prev => ({
         ...prev,
         image: res.data.imageUrl
       }));
-      
+
     } catch (err) {
       console.error('Failed to upload image:', err);
       alert('Failed to upload image');
@@ -105,14 +105,14 @@ export default function ProfilePage() {
     }
   };
 
-  if (status === 'loading') return(
+  if (status === 'loading') return (
     <div className="flex justify-center items-center min-h-screen">
       <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
     </div>
   );
 
 
-  if (status === 'unauthenticated') 
+  if (status === 'unauthenticated')
     return (
       <div className="max-w-md mx-auto mt-10 p-6 bg-red-50 border border-red-200 rounded-lg text-center">
         <p className="text-red-600 font-medium">Please sign in to access your profile</p>
@@ -133,11 +133,11 @@ export default function ProfilePage() {
         <div className="relative group">
           <div className="w-32 h-32 rounded-full overflow-hidden bg-gray-100 border-4 border-myColorA mb-4">
             {imagePreview || profile.image ? (
-              <Image 
-                src={imagePreview || profile.image} 
-                alt={profile.name || 'Profile'} 
-                width={128} 
-                height={128} 
+              <Image
+                src={imagePreview || profile.image}
+                alt={profile.name || 'Profile'}
+                width={128}
+                height={128}
                 className="w-full h-full object-cover"
               />
             ) : (
@@ -146,10 +146,10 @@ export default function ProfilePage() {
               </div>
             )}
           </div>
-          
+
           {/* Edit overlay for image */}
           {editMode && (
-            <div 
+            <div
               className="absolute inset-0 flex items-center justify-center rounded-full cursor-pointer"
               onClick={() => fileInputRef.current.click()}
             >
@@ -170,7 +170,7 @@ export default function ProfilePage() {
             </div>
           )}
         </div>
-        
+
         <h1 className="text-3xl font-bold text-myColorAB mb-2">{profile.name}</h1>
         <p className="text-slate-500">{profile.memberType || 'Member'}</p>
       </div>
@@ -252,6 +252,67 @@ export default function ProfilePage() {
           )}
         </div>
       </form>
+
+      {/* Donations Section */}
+      <div className="mt-12 pt-8 border-t border-gray-100">
+        <h2 className="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2">
+          <CreditCard className="text-myColorA" /> My Donations
+        </h2>
+        {profile.donations?.length > 0 ? (
+          <div className="space-y-4">
+            {profile.donations.map((donation) => (
+              <div key={donation._id} className="flex justify-between items-center p-4 bg-slate-50 rounded-xl border border-slate-100">
+                <div>
+                  <p className="font-bold text-slate-800">₹{donation.amount}</p>
+                  <p className="text-xs text-slate-500">{new Date(donation.createdAt).toLocaleDateString()}</p>
+                </div>
+                <div className="text-right">
+                  <span className={`px-2 py-1 rounded-full text-[10px] uppercase font-bold ${donation.paymentStatus === 'Completed' ? 'bg-green-100 text-green-700' :
+                      donation.paymentStatus === 'Pending' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700'
+                    }`}>
+                    {donation.paymentStatus}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-8 bg-slate-50 rounded-xl border border-dashed border-slate-200">
+            <p className="text-slate-400 text-sm italic">You haven't made any donations yet.</p>
+          </div>
+        )}
+      </div>
+
+      {/* Events Section */}
+      <div className="mt-12 pt-8 border-t border-gray-100">
+        <h2 className="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2">
+          <CalendarDays className="text-myColorAB" /> Participated Events
+        </h2>
+        {profile.eventRegistrations?.length > 0 ? (
+          <div className="space-y-4">
+            {profile.eventRegistrations.map((event) => (
+              <div key={event._id} className="flex justify-between items-center p-4 bg-slate-50 rounded-xl border border-slate-100">
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 rounded-lg bg-sky-100 flex items-center justify-center text-myColorA">
+                    <Calendar size={20} />
+                  </div>
+                  <div>
+                    <p className="font-bold text-slate-800">{event.title}</p>
+                    <p className="text-xs text-slate-500">{new Date(event.date).toLocaleDateString()}</p>
+                  </div>
+                </div>
+                <button className="text-myColorA hover:text-myColorAB text-sm font-medium flex items-center gap-1">
+                  View <ExternalLink size={14} />
+                </button>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-8 bg-slate-50 rounded-xl border border-dashed border-slate-200">
+            <p className="text-slate-400 text-sm italic">No event participations yet.</p>
+          </div>
+        )}
+      </div>
 
       <div className="mt-10 text-center text-sm text-slate-500">
         <p>Thank you for being part of our community!</p>

@@ -89,7 +89,7 @@ export async function POST(request) {
 
     return NextResponse.json(newVolunteer, { status: 201 });
   } catch (error) {
-    console.error("Error creating volunteer:", error);
+    console.error("DEBUG: Admin Volunteer Creation Error:", error);
     return NextResponse.json(
       { message: "Failed to create volunteer", error: error.message },
       { status: 500 }

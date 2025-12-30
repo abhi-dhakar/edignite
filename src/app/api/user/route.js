@@ -3,6 +3,8 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "../auth/[...nextauth]/route";
 import dbConnect from "@/lib/dbConnect";
 import User from "@/models/User.model";
+import Donation from "@/models/Donation.model";
+import Event from "@/models/Event.model";
 
 //GET USER PROFILE
 export async function GET(req) {
@@ -20,7 +22,10 @@ export async function GET(req) {
   try {
     await dbConnect();
 
-    const user = await User.findById(session.user.id).select("-password");
+    const user = await User.findById(session.user.id)
+      .select("-password")
+      .populate("donations")
+      .populate("eventRegistrations");
 
     if (!user) {
       return NextResponse.json(

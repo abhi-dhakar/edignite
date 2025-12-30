@@ -87,9 +87,9 @@ export default function AdminVolunteersPage() {
         volunteers.map((volunteer) =>
           volunteer._id === selectedVolunteer._id
             ? {
-                ...volunteer,
-                status: selectedStatus || selectedVolunteer.status,
-              }
+              ...volunteer,
+              status: selectedStatus || selectedVolunteer.status,
+            }
             : volunteer
         )
       );
@@ -154,10 +154,11 @@ export default function AdminVolunteersPage() {
 
   const filteredVolunteers = volunteers.filter((volunteer) => {
     const matchesSearch =
+      volunteer.fullName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       volunteer.user?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      volunteer.user?.email
-        ?.toLowerCase()
-        .includes(searchQuery.toLowerCase()) ||
+      volunteer.emailAddress?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      volunteer.user?.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      volunteer.enrollmentNumber?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       volunteer.skills?.some((skill) =>
         skill.toLowerCase().includes(searchQuery.toLowerCase())
       );
@@ -357,19 +358,31 @@ export default function AdminVolunteersPage() {
               </div>
 
               <div className="grid grid-cols-2 gap-3">
-                <div className="font-semibold">Name:</div>
-                <div>{selectedVolunteer.user?.name || "N/A"}</div>
+                <div className="font-semibold">Full Name:</div>
+                <div>{selectedVolunteer.fullName || selectedVolunteer.user?.name || "N/A"}</div>
 
                 <div className="font-semibold">Email:</div>
                 <div className="break-all">
-                  {selectedVolunteer.user?.email || "N/A"}
+                  {selectedVolunteer.emailAddress || selectedVolunteer.user?.email || "N/A"}
                 </div>
 
-                <div className="font-semibold">Phone:</div>
-                <div>{selectedVolunteer.user?.phone || "N/A"}</div>
+                <div className="font-semibold">Mobile:</div>
+                <div>{selectedVolunteer.mobileNumber || selectedVolunteer.user?.phone || "N/A"}</div>
 
-                <div className="font-semibold">Address:</div>
-                <div>{selectedVolunteer.user?.address || "N/A"}</div>
+                <div className="font-semibold">Enrollment:</div>
+                <div>{selectedVolunteer.enrollmentNumber || "N/A"}</div>
+
+                <div className="font-semibold">Branch:</div>
+                <div>{selectedVolunteer.branch || "N/A"}</div>
+
+                <div className="font-semibold">Division:</div>
+                <div>{selectedVolunteer.division || "N/A"}</div>
+
+                <div className="font-semibold">Year:</div>
+                <div>{selectedVolunteer.year || "N/A"}</div>
+
+                <div className="font-semibold">User ID Name:</div>
+                <div>{selectedVolunteer.user?.name || "N/A"} (From Account)</div>
 
                 <div className="font-semibold">Skills:</div>
                 <div>

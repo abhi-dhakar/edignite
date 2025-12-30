@@ -2,8 +2,6 @@ import { getToken } from "next-auth/jwt";
 import { NextResponse } from "next/server";
 
 const protectedRoutes = [
-  "/api/user-message",
-  "/api/donations",
   "/api/notifications",
   "/api/sponsorship",
   "/api/user",

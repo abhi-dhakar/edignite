@@ -14,6 +14,13 @@ export default function VolunteerProfilePage() {
   const [newSkill, setNewSkill] = useState("");
 
   const [formData, setFormData] = useState({
+    fullName: "",
+    emailAddress: "",
+    mobileNumber: "",
+    enrollmentNumber: "",
+    branch: "",
+    division: "",
+    year: "",
     skills: [],
     availability: "",
     experience: "",
@@ -27,6 +34,13 @@ export default function VolunteerProfilePage() {
         if (res.data.volunteer) {
           setVolunteer(res.data.volunteer);
           setFormData({
+            fullName: res.data.volunteer.fullName || "",
+            emailAddress: res.data.volunteer.emailAddress || "",
+            mobileNumber: res.data.volunteer.mobileNumber || "",
+            enrollmentNumber: res.data.volunteer.enrollmentNumber || "",
+            branch: res.data.volunteer.branch || "",
+            division: res.data.volunteer.division || "",
+            year: res.data.volunteer.year || "",
             skills: res.data.volunteer.skills || [],
             availability: res.data.volunteer.availability || "",
             experience: res.data.volunteer.experience || "",
@@ -76,7 +90,7 @@ export default function VolunteerProfilePage() {
       console.error("Failed to update volunteer profile:", err);
       setError(
         err.response?.data?.message ||
-          "Failed to update your volunteer profile."
+        "Failed to update your volunteer profile."
       );
     } finally {
       setLoading(false);
@@ -95,7 +109,7 @@ export default function VolunteerProfilePage() {
       console.error("Failed to create volunteer profile:", err);
       setError(
         err.response?.data?.message ||
-          "Failed to create your volunteer profile."
+        "Failed to create your volunteer profile."
       );
     } finally {
       setLoading(false);
@@ -115,21 +129,21 @@ export default function VolunteerProfilePage() {
 
   if (status === "unauthenticated") {
     return (
-     <div className="min-h-screen flex justify-center items-center">
-       <div className="max-w-md mx-auto mb-14 p-6 bg-red-50 border border-red-200 rounded-lg text-center">
-        <p className="text-red-600 font-medium">
-          Please sign in to access your volunteer profile
-        </p>
-        <div className="mt-4">
-          <Link
-            href="/signin"
-            className="px-4 py-2 bg-myColorA text-white rounded-lg hover:bg-myColorAB"
-          >
-            Sign In
-          </Link>
+      <div className="min-h-screen flex justify-center items-center">
+        <div className="max-w-md mx-auto mb-14 p-6 bg-red-50 border border-red-200 rounded-lg text-center">
+          <p className="text-red-600 font-medium">
+            Please sign in to access your volunteer profile
+          </p>
+          <div className="mt-4">
+            <Link
+              href="/signin"
+              className="px-4 py-2 bg-myColorA text-white rounded-lg hover:bg-myColorAB"
+            >
+              Sign In
+            </Link>
+          </div>
         </div>
       </div>
-     </div>
     );
   }
 
@@ -185,13 +199,12 @@ export default function VolunteerProfilePage() {
           {volunteer && !editMode && (
             <div className="mb-6">
               <div
-                className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${
-                  volunteer.status === "Approved"
-                    ? "bg-green-100 text-green-800"
-                    : volunteer.status === "Rejected"
-                      ? "bg-red-100 text-red-800"
-                      : "bg-yellow-100 text-yellow-800"
-                }`}
+                className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${volunteer.status === "Approved"
+                  ? "bg-green-100 text-green-800"
+                  : volunteer.status === "Rejected"
+                    ? "bg-red-100 text-red-800"
+                    : "bg-yellow-100 text-yellow-800"
+                  }`}
               >
                 Status: {volunteer.status}
               </div>
@@ -206,231 +219,408 @@ export default function VolunteerProfilePage() {
 
           {editMode ? (
             <form className="space-y-6">
-              {/* Skills Section */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Skills
-                </label>
-                <div className="mb-2">
-                  <div className="flex flex-wrap gap-2 mb-3">
-                    {formData.skills.map((skill, index) => (
-                      <span
-                        key={index}
-                        className="bg-green-100 text-myColorA text-sm px-3 py-1 rounded-full flex items-center"
-                      >
-                        {skill}
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveSkill(skill)}
-                          className="ml-2 text-myColorA hover:text-myColorAB"
-                        >
-                          &times;
-                        </button>
-                      </span>
-                    ))}
-                  </div>
-                  <div className="flex">
-                    <input
-                      type="text"
-                      value={newSkill}
-                      onChange={(e) => setNewSkill(e.target.value)}
-                      placeholder="Add a skill (e.g., Teaching, First Aid)"
-                      className="flex-grow p-2 border border-gray-300 rounded-l focus:outline-none focus:ring-2 focus:ring-myColorA"
-                      onKeyPress={(e) =>
-                        e.key === "Enter" &&
-                        (e.preventDefault(), handleAddSkill())
-                      }
-                    />
-                    <button
-                      type="button"
-                      onClick={handleAddSkill}
-                      className="bg-myColorA text-white px-4 rounded-r hover:bg-myColorAB"
-                    >
-                      Add
-                    </button>
-                  </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-6 border-b border-gray-100">
+                {/* Full Name */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Full Name
+                  </label>
+                  <input
+                    type="text"
+                    name="fullName"
+                    value={formData.fullName}
+                    onChange={handleChange}
+                    required
+                    placeholder="John Doe"
+                    className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-myColorA"
+                  />
+                </div>
+
+                {/* Email Address */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Email Address
+                  </label>
+                  <input
+                    type="email"
+                    name="emailAddress"
+                    value={formData.emailAddress}
+                    onChange={handleChange}
+                    required
+                    placeholder="john@example.com"
+                    className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-myColorA"
+                  />
+                </div>
+
+                {/* Mobile Number */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Mobile Number
+                  </label>
+                  <input
+                    type="tel"
+                    name="mobileNumber"
+                    value={formData.mobileNumber}
+                    onChange={handleChange}
+                    required
+                    pattern="[0-9]{10}"
+                    placeholder="10-digit number"
+                    className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-myColorA"
+                  />
+                </div>
+
+                {/* Enrollment Number */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Enrollment/Registration Number
+                  </label>
+                  <input
+                    type="text"
+                    name="enrollmentNumber"
+                    value={formData.enrollmentNumber}
+                    onChange={handleChange}
+                    required
+                    placeholder="EN123456"
+                    className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-myColorA"
+                  />
+                </div>
+
+                {/* Branch */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Branch/Department
+                  </label>
+                  <input
+                    type="text"
+                    name="branch"
+                    value={formData.branch}
+                    onChange={handleChange}
+                    required
+                    placeholder="e.g. Computer Science"
+                    className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-myColorA"
+                  />
+                </div>
+
+                {/* Division */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Division
+                  </label>
+                  <input
+                    type="text"
+                    name="division"
+                    value={formData.division}
+                    onChange={handleChange}
+                    required
+                    placeholder="e.g. A"
+                    className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-myColorA"
+                  />
+                </div>
+
+                {/* Year */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Year
+                  </label>
+                  <input
+                    type="text"
+                    name="year"
+                    value={formData.year}
+                    onChange={handleChange}
+                    required
+                    placeholder="e.g. 2nd Year, MSc 1st Year"
+                    className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-myColorA"
+                  />
                 </div>
               </div>
 
-              {/* Availability */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Availability
-                </label>
-                <select
-                  name="availability"
-                  value={formData.availability}
-                  onChange={handleChange}
-                  className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-myColorA"
-                >
-                  <option value="">Select your availability</option>
-                  <option value="Weekends">Weekends</option>
-                  <option value="Weekdays">Weekdays</option>
-                  <option value="Evenings">Evenings</option>
-                  <option value="Full-time">Full-time</option>
-                  <option value="Remote only">Remote only</option>
-                  <option value="Flexible">Flexible</option>
-                </select>
-              </div>
+              <div className="space-y-6">
+                {/* Skills Section */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Skills
+                  </label>
+                  <div className="mb-2">
+                    <div className="flex flex-wrap gap-2 mb-3">
+                      {formData.skills.map((skill, index) => (
+                        <span
+                          key={index}
+                          className="bg-green-100 text-myColorA text-sm px-3 py-1 rounded-full flex items-center"
+                        >
+                          {skill}
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveSkill(skill)}
+                            className="ml-2 text-myColorA hover:text-myColorAB"
+                          >
+                            &times;
+                          </button>
+                        </span>
+                      ))}
+                    </div>
+                    <div className="flex">
+                      <input
+                        type="text"
+                        value={newSkill}
+                        onChange={(e) => setNewSkill(e.target.value)}
+                        placeholder="Add a skill (e.g., Teaching, First Aid)"
+                        className="flex-grow p-2 border border-gray-300 rounded-l focus:outline-none focus:ring-2 focus:ring-myColorA"
+                        onKeyPress={(e) =>
+                          e.key === "Enter" &&
+                          (e.preventDefault(), handleAddSkill())
+                        }
+                      />
+                      <button
+                        type="button"
+                        onClick={handleAddSkill}
+                        className="bg-myColorA text-white px-4 rounded-r hover:bg-myColorAB"
+                      >
+                        Add
+                      </button>
+                    </div>
+                  </div>
+                </div>
 
-              {/* Experience */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Experience
-                </label>
-                <textarea
-                  name="experience"
-                  value={formData.experience}
-                  onChange={handleChange}
-                  rows={4}
-                  placeholder="Describe your relevant experience..."
-                  className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-myColorA"
-                />
-              </div>
+                {/* Availability */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Availability
+                  </label>
+                  <select
+                    name="availability"
+                    value={formData.availability}
+                    onChange={handleChange}
+                    className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-myColorA"
+                  >
+                    <option value="">Select your availability</option>
+                    <option value="Weekends">Weekends</option>
+                    <option value="Weekdays">Weekdays</option>
+                    <option value="Evenings">Evenings</option>
+                    <option value="Full-time">Full-time</option>
+                    <option value="Remote only">Remote only</option>
+                    <option value="Flexible">Flexible</option>
+                  </select>
+                </div>
 
-              {/* Preferred Location */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Preferred Location
-                </label>
-                <input
-                  type="text"
-                  name="preferredLocation"
-                  value={formData.preferredLocation}
-                  onChange={handleChange}
-                  placeholder="City, region, or 'Remote'"
-                  className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-myColorA"
-                />
-              </div>
+                {/* Experience */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Experience
+                  </label>
+                  <textarea
+                    name="experience"
+                    value={formData.experience}
+                    onChange={handleChange}
+                    rows={4}
+                    placeholder="Describe your relevant experience..."
+                    className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-myColorA"
+                  />
+                </div>
 
-              <div className="flex justify-end space-x-4 pt-4">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setEditMode(false);
-                    if (volunteer) {
-                      setFormData({
-                        skills: volunteer.skills || [],
-                        availability: volunteer.availability || "",
-                        experience: volunteer.experience || "",
-                        preferredLocation: volunteer.preferredLocation || "",
-                      });
+                {/* Preferred Location */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Preferred Location
+                  </label>
+                  <input
+                    type="text"
+                    name="preferredLocation"
+                    value={formData.preferredLocation}
+                    onChange={handleChange}
+                    placeholder="City, region, or 'Remote'"
+                    className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-myColorA"
+                  />
+                </div>
+
+                <div className="flex justify-end space-x-4 pt-4">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setEditMode(false);
+                      if (volunteer) {
+                        setFormData({
+                          fullName: volunteer.fullName || "",
+                          emailAddress: volunteer.emailAddress || "",
+                          mobileNumber: volunteer.mobileNumber || "",
+                          enrollmentNumber: volunteer.enrollmentNumber || "",
+                          branch: volunteer.branch || "",
+                          division: volunteer.division || "",
+                          year: volunteer.year || "",
+                          skills: volunteer.skills || [],
+                          availability: volunteer.availability || "",
+                          experience: volunteer.experience || "",
+                          preferredLocation: volunteer.preferredLocation || "",
+                        });
+                      }
+                    }}
+                    className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={
+                      volunteer ? handleSave : handleCreateVolunteerProfile
                     }
-                  }}
-                  className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  onClick={
-                    volunteer ? handleSave : handleCreateVolunteerProfile
-                  }
-                  disabled={loading}
-                  className="px-4 py-2 bg-myColorA text-white rounded-md hover:bg-myColorAB disabled:opacity-50 flex items-center"
-                >
-                  {loading && (
-                    <svg
-                      className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                      ></circle>
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                      ></path>
-                    </svg>
-                  )}
-                  {loading
-                    ? "Saving..."
-                    : volunteer
-                      ? "Save Changes"
-                      : "Submit Profile"}
-                </button>
+                    disabled={loading}
+                    className="px-4 py-2 bg-myColorA text-white rounded-md hover:bg-myColorAB disabled:opacity-50 flex items-center"
+                  >
+                    {loading && (
+                      <svg
+                        className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        ></circle>
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        ></path>
+                      </svg>
+                    )}
+                    {loading
+                      ? "Saving..."
+                      : volunteer
+                        ? "Save Changes"
+                        : "Submit Profile"}
+                  </button>
+                </div>
               </div>
             </form>
           ) : (
             volunteer && (
-              <div className="space-y-6">
-                {/* Skills Display */}
-                <div>
-                  <h3 className="text-sm font-medium text-gray-700 mb-1">
-                    Skills
-                  </h3>
-                  <div className="flex flex-wrap gap-2">
-                    {volunteer.skills && volunteer.skills.length > 0 ? (
-                      volunteer.skills.map((skill, index) => (
-                        <span
-                          key={index}
-                          className="bg-gray-100 text-myColorAB text-sm px-3 py-1 rounded-full"
-                        >
-                          {skill}
-                        </span>
-                      ))
-                    ) : (
-                      <p className="text-gray-500 italic">
-                        No skills added yet
-                      </p>
-                    )}
+              <div className="space-y-8">
+                {/* Personal Information Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-6 border-b border-gray-100">
+                  <div>
+                    <h3 className="text-sm font-medium text-gray-500 mb-1 uppercase tracking-wider">
+                      Full Name
+                    </h3>
+                    <p className="text-gray-900 font-medium">
+                      {volunteer.fullName}
+                    </p>
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-medium text-gray-500 mb-1 uppercase tracking-wider">
+                      Email Address
+                    </h3>
+                    <p className="text-gray-900 font-medium">
+                      {volunteer.emailAddress}
+                    </p>
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-medium text-gray-500 mb-1 uppercase tracking-wider">
+                      Mobile Number
+                    </h3>
+                    <p className="text-gray-900 font-medium">
+                      {volunteer.mobileNumber}
+                    </p>
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-medium text-gray-500 mb-1 uppercase tracking-wider">
+                      Enrollment Number
+                    </h3>
+                    <p className="text-gray-900 font-medium">
+                      {volunteer.enrollmentNumber}
+                    </p>
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-medium text-gray-500 mb-1 uppercase tracking-wider">
+                      Branch/Department
+                    </h3>
+                    <p className="text-gray-900 font-medium">
+                      {volunteer.branch}
+                    </p>
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-medium text-gray-500 mb-1 uppercase tracking-wider">
+                      Division & Year
+                    </h3>
+                    <p className="text-gray-900 font-medium">
+                      {volunteer.division} - {volunteer.year}
+                    </p>
                   </div>
                 </div>
 
-                {/* Availability Display */}
-                <div>
-                  <h3 className="text-sm font-medium text-gray-700 mb-1">
-                    Availability
-                  </h3>
-                  <p className="text-gray-900">
-                    {volunteer.availability || "Not specified"}
-                  </p>
-                </div>
+                <div className="space-y-6">
+                  {/* Skills Display */}
+                  <div>
+                    <h3 className="text-sm font-medium text-gray-700 mb-1">
+                      Skills
+                    </h3>
+                    <div className="flex flex-wrap gap-2">
+                      {volunteer.skills && volunteer.skills.length > 0 ? (
+                        volunteer.skills.map((skill, index) => (
+                          <span
+                            key={index}
+                            className="bg-gray-100 text-myColorAB text-sm px-3 py-1 rounded-full"
+                          >
+                            {skill}
+                          </span>
+                        ))
+                      ) : (
+                        <p className="text-gray-500 italic">
+                          No skills added yet
+                        </p>
+                      )}
+                    </div>
+                  </div>
 
-                {/* Experience Display */}
-                <div>
-                  <h3 className="text-sm font-medium text-gray-700 mb-1">
-                    Experience
-                  </h3>
-                  <p className="text-gray-900 whitespace-pre-line">
-                    {volunteer.experience || "No experience details provided"}
-                  </p>
-                </div>
+                  {/* Availability Display */}
+                  <div>
+                    <h3 className="text-sm font-medium text-gray-700 mb-1">
+                      Availability
+                    </h3>
+                    <p className="text-gray-900">
+                      {volunteer.availability || "Not specified"}
+                    </p>
+                  </div>
 
-                {/* Preferred Location Display */}
-                <div>
-                  <h3 className="text-sm font-medium text-gray-700 mb-1">
-                    Preferred Location
-                  </h3>
-                  <p className="text-gray-900">
-                    {volunteer.preferredLocation || "Not specified"}
-                  </p>
-                </div>
+                  {/* Experience Display */}
+                  <div>
+                    <h3 className="text-sm font-medium text-gray-700 mb-1">
+                      Experience
+                    </h3>
+                    <p className="text-gray-900 whitespace-pre-line">
+                      {volunteer.experience || "No experience details provided"}
+                    </p>
+                  </div>
 
-                <div className="pt-4 mt-6 border-t border-gray-200">
-                  <button
-                    onClick={() => setEditMode(true)}
-                    disabled={
-                      volunteer.status === "Approved" ||
-                      volunteer.status === "Rejected"
-                    }
-                    className={`px-4 py-2 rounded-md ${
-                      volunteer.status === "Approved" ||
-                      volunteer.status === "Rejected"
+                  {/* Preferred Location Display */}
+                  <div>
+                    <h3 className="text-sm font-medium text-gray-700 mb-1">
+                      Preferred Location
+                    </h3>
+                    <p className="text-gray-900">
+                      {volunteer.preferredLocation || "Not specified"}
+                    </p>
+                  </div>
+
+                  <div className="pt-4 mt-6 border-t border-gray-200">
+                    <button
+                      onClick={() => setEditMode(true)}
+                      disabled={
+                        volunteer.status === "Approved" ||
+                        volunteer.status === "Rejected"
+                      }
+                      className={`px-4 py-2 rounded-md ${volunteer.status === "Approved" ||
+                        volunteer.status === "Rejected"
                         ? "bg-gray-300 cursor-not-allowed text-gray-600"
                         : "bg-myColorA text-white hover:bg-myColorAB"
-                    }`}
-                  >
-                    Edit Profile
-                  </button>
+                        }`}
+                    >
+                      Edit Profile
+                    </button>
+                  </div>
                 </div>
               </div>
             )

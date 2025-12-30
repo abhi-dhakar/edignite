@@ -53,7 +53,7 @@ const UserSchema = new mongoose.Schema(
 
     volunteerProfile: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Volunteer", 
+      ref: "Volunteer",
     },
 
     eventRegistrations: [
@@ -62,6 +62,10 @@ const UserSchema = new mongoose.Schema(
         ref: "Event",
       },
     ],
+    isGuest: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );

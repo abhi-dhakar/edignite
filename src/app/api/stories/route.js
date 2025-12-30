@@ -1,11 +1,12 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
 import Story from "@/models/Story.model";
+import User from "@/models/User.model";
 
 // GET Fetch all stories (PUBLIC ACCESS)
 export async function GET(request) {
   try {
-   
+
     await dbConnect();
 
     const { searchParams } = new URL(request.url);
