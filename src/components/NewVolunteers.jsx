@@ -43,7 +43,7 @@ export default function NewVolunteers() {
             whileInView={{ opacity: 1, y: 0 }}
             className="text-4xl md:text-5xl lg:text-6xl font-black text-gray-900 leading-tight tracking-tighter"
           >
-            Meet Our <span className="text-secondary">New Volunteers</span>
+            Meet Our <span className="text-myColorA">New Volunteers</span>
           </motion.h2>
 
           <motion.p
