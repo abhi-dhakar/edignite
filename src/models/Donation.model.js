@@ -5,7 +5,15 @@ const DonationSchema = new mongoose.Schema(
     donor: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true,
+      required: false,
+    },
+
+    donorName: {
+      type: String,
+    },
+
+    donorEmail: {
+      type: String,
     },
 
     amount: {
@@ -18,21 +26,23 @@ const DonationSchema = new mongoose.Schema(
       default: "INR",
     },
 
+    orderId: {
+      type: String,
+      required: true,
+    },
+
+    transactionId: {
+      type: String,
+      required: true,
+    },
+
     paymentStatus: {
       type: String,
       enum: ["Pending", "Completed", "Failed"],
       default: "Pending",
     },
-
-    transactionId: {
-      type: String,
-    },
-
-    receiptUrl: {
-      type: String, // Optional: store download link for donation receipt (PDF/Image)
-    },
   },
-  { timestamps: true }
+  { timestamps: true } // Updated schema with donor field
 );
 
 export default mongoose.models.Donation ||
