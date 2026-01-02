@@ -8,7 +8,20 @@ import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import Link from "next/link";
-
+import {
+  Loader2,
+  UploadCloud,
+  User,
+  Mail,
+  Lock,
+  Phone,
+  MapPin,
+  ArrowRight,
+  CheckCircle2,
+  AlertCircle,
+  HeartHandshake
+} from "lucide-react";
+import Image from "next/image";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -17,12 +30,12 @@ export default function SignupPage() {
   const [imagePreview, setImagePreview] = useState(null);
   const [loading, setLoading] = useState(false);
   const [submitError, setSubmitError] = useState("");
-  
+
   // Two-step upload state
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState({ step: 'idle', percent: 0 });
   const [tempFilePath, setTempFilePath] = useState(null);
-  
+
   // OTP verification state
   const [step, setStep] = useState("register"); // "register" or "verify"
   const [otp, setOtp] = useState("");
@@ -47,46 +60,44 @@ export default function SignupPage() {
     },
   });
 
-
-
   // Step 1: Upload to temporary storage
   const handleImageChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    
+
     // Validate file
     if (file.size > 5 * 1024 * 1024) {
       setSubmitError("Image must be less than 5MB");
       return;
     }
-    
+
     if (!file.type.startsWith("image/")) {
       setSubmitError("Please upload an image file");
       return;
     }
-    
+
     // Show local preview immediately
     setProfileImage(file);
     setImagePreview(URL.createObjectURL(file));
     setSubmitError("");
-    
+
     // Upload to temp storage
     await uploadToTempStorage(file);
   };
-  
+
   // Upload image to temporary storage
   const uploadToTempStorage = async (file) => {
     setIsUploading(true);
     setUploadProgress({ step: 'local', percent: 0 });
-    
+
     try {
       const formData = new FormData();
       formData.append('image', file);
 
-      if(tempFilePath){
-         formData.append('previousFilePath', tempFilePath);
+      if (tempFilePath) {
+        formData.append('previousFilePath', tempFilePath);
       }
-      
+
       // Upload with progress tracking
       const response = await axios.post('/api/upload/temp-upload', formData, {
         headers: {
@@ -97,7 +108,7 @@ export default function SignupPage() {
           setUploadProgress({ step: 'local', percent: percentCompleted });
         }
       });
-      
+
       if (response.data.success) {
         setTempFilePath(response.data.tempFile.path);
         setUploadProgress({ step: 'localComplete', percent: 100 });
@@ -152,17 +163,17 @@ export default function SignupPage() {
   // Upload image from temp to Cloudinary
   const uploadToCloudinary = async (userId) => {
     if (!tempFilePath) return null;
-    
+
     setUploadProgress({ step: 'cloudinary', percent: 0 });
     setIsUploading(true);
-    
+
     try {
       const response = await axios.post('/api/upload/upload-to-cloudinary', {
         userId,
         tempFilePath,
         folder: 'user-profiles'
       });
-      
+
       if (response.data.success) {
         setUploadProgress({ step: 'complete', percent: 100 });
         return response.data.imageUrl;
@@ -198,17 +209,17 @@ export default function SignupPage() {
 
       if (verifyResponse.data.success) {
         const userId = verifyResponse.data.user.id;
-        
-       // Upload image to Cloudinary from temp file if we have one
-      if (tempFilePath) {
-        try {
-          await uploadToCloudinary(userId);
-        } catch (uploadError) {
-          console.error("Image upload failed:", uploadError);
-          // Don't stop the registration process, just show a message
-          setSubmitError("Your account was created, but profile image couldn't be uploaded.");
+
+        // Upload image to Cloudinary from temp file if we have one
+        if (tempFilePath) {
+          try {
+            await uploadToCloudinary(userId);
+          } catch (uploadError) {
+            console.error("Image upload failed:", uploadError);
+            // Don't stop the registration process, just show a message
+            setSubmitError("Your account was created, but profile image couldn't be uploaded.");
+          }
         }
-      }
 
         // Log the user in
         await signIn("credentials", {
@@ -216,7 +227,7 @@ export default function SignupPage() {
           password: formDataCache.password,
           redirect: false,
         });
-        
+
         router.push("/");
       } else {
         setSubmitError("Verification failed. Please try again.");
@@ -231,15 +242,15 @@ export default function SignupPage() {
   // Handle resend OTP functionality
   const resendOTP = async () => {
     if (resendDisabled) return;
-    
+
     setLoading(true);
     setSubmitError("");
-    
+
     try {
       const response = await axios.post("/api/auth/resend-otp", {
         email: formDataCache.email
       });
-      
+
       if (response.data.success) {
         setSubmitError(""); // Clear any existing errors
         startResendCountdown();
@@ -257,7 +268,7 @@ export default function SignupPage() {
   const startResendCountdown = () => {
     setResendDisabled(true);
     setCountdown(60);
-    
+
     const timer = setInterval(() => {
       setCountdown(prev => {
         if (prev <= 1) {
@@ -271,241 +282,330 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto my-12 bg-white rounded-xl shadow-md overflow-hidden">
-      <div className="md:flex">
-        <div className="md:w-1/3 bg-myColorA p-8 flex items-center justify-center">
-          <div className="text-center">
-            <h2 className="text-2xl font-bold text-white mb-4">Join Our Community</h2>
-            <p className="text-green-100">Together we can make a difference</p>
+    <div className="min-h-screen relative flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-slate-900">
+      {/* Background Image with Overlay */}
+      <div className="absolute inset-0 overflow-hidden">
+        <Image
+          src="/children-banner.webp"
+          alt="Community Background"
+          fill
+          className="object-cover opacity-60"
+          quality={85}
+          priority
+        />
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-900/90 via-slate-900/80 to-slate-900/60 backdrop-blur-[2px]" />
+      </div>
+
+      {/* Main Card Container */}
+      <div className="relative w-full max-w-5xl bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col md:flex-row animate-in fade-in zoom-in duration-500">
+
+        {/* Left Side - Hero / Branding */}
+        <div className="md:w-2/5 bg-gradient-to-br from-myColorA to-emerald-800 p-8 lg:p-12 text-white flex flex-col justify-between relative overflow-hidden">
+          {/* Decorative circles */}
+          <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 rounded-full bg-white/10 blur-3xl"></div>
+          <div className="absolute bottom-0 left-0 -ml-16 -mb-16 w-48 h-48 rounded-full bg-black/10 blur-2xl"></div>
+
+          <div className="relative z-10">
+            <div className="inline-flex items-center gap-2 mb-6 text-emerald-100 font-semibold tracking-wider uppercase text-sm">
+              <HeartHandshake className="w-5 h-5" />
+              <span>Join the Movement</span>
+            </div>
+            <h2 className="text-3xl lg:text-4xl font-bold leading-tight mb-4">
+              Be the Change You Wish to See
+            </h2>
+            <p className="text-emerald-100/90 leading-relaxed">
+              Create an account to track your impact, manage donations, and connect with a community dedicated to making a difference.
+            </p>
+          </div>
+
+          <div className="relative z-10 mt-12">
+            <div className="space-y-4">
+              <div className="flex items-center gap-4 text-sm font-medium text-emerald-50/90">
+                <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">1</div>
+                <span>Create your compassionate profile</span>
+              </div>
+              <div className="flex items-center gap-4 text-sm font-medium text-emerald-50/90">
+                <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">2</div>
+                <span>Verify your identity securely</span>
+              </div>
+              <div className="flex items-center gap-4 text-sm font-medium text-emerald-50/90">
+                <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">3</div>
+                <span>Start making a real impact</span>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div className="md:w-2/3 p-8">
-          <h1 className="text-2xl font-bold text-myColorAB mb-6">
-            {step === "register" ? "Create Your Account" : "Email Verification"}
-          </h1>
+        {/* Right Side - Form Content */}
+        <div className="md:w-3/5 p-8 lg:p-12 bg-white">
+          <div className="max-w-md mx-auto">
 
-          {step === "register" ? (
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-              {/* Profile Image */}
-              <div className="mb-6 flex flex-col items-center">
-                <div
-                  className="w-28 h-28 rounded-full mb-3 bg-gray-100 border-2 border-myColorA flex items-center justify-center overflow-hidden cursor-pointer relative"
-                  onClick={() => fileInputRef.current.click()}
-                >
-                  {imagePreview ? (
-                    <>
-                      <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
-                      {isUploading && (
-                        <div className="absolute inset-0 bg-black bg-opacity-50 flex flex-col items-center justify-center">
-                          <div className="text-white text-xs font-bold mb-1">
-                            {uploadProgress.step === 'local' && 'Uploading...'}
-                            {uploadProgress.step === 'localComplete' && 'Ready'}
-                            {uploadProgress.step === 'cloudinary' && 'Processing...'}
-                            {uploadProgress.step === 'error' && 'Failed'}
-                          </div>
-                          <div className="w-16 h-1 bg-gray-300 rounded-full overflow-hidden">
-                            <div 
-                              className="h-full bg-white" 
-                              style={{ width: `${uploadProgress.percent}%` }}
-                            ></div>
-                          </div>
+            <h1 className="text-2xl font-bold text-slate-800 mb-2">
+              {step === "register" ? "Create Your Account" : "Verify Email Address"}
+            </h1>
+            <p className="text-slate-500 mb-8 text-sm">
+              {step === "register"
+                ? "Fill in your details to get started with your journey."
+                : "We have sent a 6-digit code to your email."}
+            </p>
+
+            {step === "register" ? (
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+
+                {/* Profile Image Section */}
+                <div className="flex flex-col items-center mb-6">
+                  <div
+                    className="relative group cursor-pointer"
+                    onClick={() => fileInputRef.current?.click()}
+                  >
+                    <div className={`w-24 h-24 rounded-full overflow-hidden border-4 transition-all duration-300 ${isUploading ? 'border-myColorA' : 'border-slate-100 group-hover:border-myColorA'}`}>
+                      {imagePreview ? (
+                        <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
+                      ) : (
+                        <div className="w-full h-full bg-slate-50 flex items-center justify-center text-slate-300 group-hover:text-myColorA transition-colors">
+                          <User className="w-10 h-10" />
                         </div>
                       )}
-                    </>
-                  ) : (
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                    </svg>
-                  )}
-                </div>
-                <input
-                  type="file"
-                  ref={fileInputRef}
-                  onChange={handleImageChange}
-                  accept="image/*"
-                  className="hidden"
-                />
-                <button
-                  type="button"
-                  onClick={() => fileInputRef.current.click()}
-                  className="text-sm text-myColorA hover:text-myColorAB"
-                  disabled={isUploading}
-                >
-                  {isUploading 
-                    ? "Uploading..." 
-                    : imagePreview 
-                      ? (tempFilePath ? "Change Photo" : "Upload Failed - Try Again") 
-                      : "Add Profile Photo"}
-                </button>
-              </div>
 
-              {/* Name + Email */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Name*</label>
-                  <input
-                    {...register("name")}
-                    type="text"
-                    placeholder="Your Name"
-                    className="w-full p-2 rounded border border-gray-300 focus:ring-2 focus:ring-green-500"
-                  />
-                  {errors.name && <p className="text-sm text-red-600">{errors.name.message}</p>}
+                      {/* Upload Overlay */}
+                      <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                        <UploadCloud className="w-8 h-8 text-white" />
+                      </div>
+
+                      {/* Loading Overlay */}
+                      {isUploading && (
+                        <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center">
+                          <Loader2 className="w-6 h-6 text-white animate-spin mb-1" />
+                          <span className="text-[10px] font-bold text-white">{uploadProgress.percent}%</span>
+                        </div>
+                      )}
+                    </div>
+
+                    <button type="button" className="mt-2 text-xs font-medium text-myColorA hover:text-myColorAB text-center w-full">
+                      {imagePreview ? 'Change image' : 'Upload image'}
+                    </button>
+
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      onChange={handleImageChange}
+                      accept="image/*"
+                      className="hidden"
+                    />
+                  </div>
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Email*</label>
-                  <input
-                    {...register("email")}
-                    type="email"
-                    placeholder="you@example.com"
-                    className="w-full p-2 rounded border border-gray-300 focus:ring-2 focus:ring-green-500"
-                  />
-                  {errors.email && <p className="text-sm text-red-600">{errors.email.message}</p>}
-                </div>
-              </div>
+                {/* Input Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Name */}
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Full Name</label>
+                    <div className="relative">
+                      <User className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
+                      <input
+                        {...register("name")}
+                        type="text"
+                        placeholder="Enter your name"
+                        className="w-full pl-9 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-myColorA focus:border-myColorA transition-all placeholder:text-slate-400"
+                      />
+                    </div>
+                    {errors.name && <p className="text-xs text-red-500 font-medium">{errors.name.message}</p>}
+                  </div>
 
-              {/* Password */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Password*</label>
-                <input
-                  {...register("password")}
-                  type="password"
-                  placeholder="Create a strong password"
-                  className="w-full p-2 rounded border border-gray-300 focus:ring-2 focus:ring-green-500"
-                />
-                {errors.password && <p className="text-sm text-red-600">{errors.password.message}</p>}
-              </div>
+                  {/* Email */}
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Email Address</label>
+                    <div className="relative">
+                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
+                      <input
+                        {...register("email")}
+                        type="email"
+                        placeholder="Enter your email"
+                        className="w-full pl-9 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-myColorA focus:border-myColorA transition-all placeholder:text-slate-400"
+                      />
+                    </div>
+                    {errors.email && <p className="text-xs text-red-500 font-medium">{errors.email.message}</p>}
+                  </div>
 
-              {/* Phone + MemberType */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
-                  <input
-                    {...register("phone")}
-                    type="text"
-                    placeholder="Phone number"
-                    className="w-full p-2 rounded border border-gray-300 focus:ring-2 focus:ring-green-500"
-                  />
-                </div>
+                  {/* Password */}
+                  <div className="space-y-1.5 md:col-span-2">
+                    <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Password</label>
+                    <div className="relative">
+                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
+                      <input
+                        {...register("password")}
+                        type="password"
+                        placeholder="Enter password"
+                        className="w-full pl-9 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-myColorA focus:border-myColorA transition-all placeholder:text-slate-400"
+                      />
+                    </div>
+                    {errors.password && <p className="text-xs text-red-500 font-medium">{errors.password.message}</p>}
+                  </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">How You'll Participate*</label>
-                  <select
-                    {...register("memberType")}
-                    className="w-full p-2 rounded border border-gray-300 focus:ring-2 focus:ring-green-500"
-                  >
-                    <option value="Volunteer">Volunteer</option>
-                    <option value="Donor">Donor</option>
-                    <option value="Sponsor">Sponsor</option>
-                    <option value="Beneficiary">Beneficiary</option>
-                  </select>
-                  {errors.memberType && <p className="text-sm text-red-600">{errors.memberType.message}</p>}
-                </div>
-              </div>
+                  {/* Phone */}
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Phone Number</label>
+                    <div className="relative">
+                      <Phone className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
+                      <input
+                        {...register("phone")}
+                        type="tel"
+                        placeholder="Enter phone number"
+                        className="w-full pl-9 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-myColorA focus:border-myColorA transition-all placeholder:text-slate-400"
+                      />
+                    </div>
+                    {errors.phone && <p className="text-xs text-red-500 font-medium">{errors.phone.message}</p>}
+                  </div>
 
-              {/* Address */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Address</label>
-                <input
-                  {...register("address")}
-                  type="text"
-                  placeholder="Your address"
-                  className="w-full p-2 rounded border border-gray-300 focus:ring-2 focus:ring-green-500"
-                />
-              </div>
+                  {/* Role Selection */}
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide">I am a</label>
+                    <div className="relative">
+                      <select
+                        {...register("memberType")}
+                        className="w-full pl-3 pr-8 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-myColorA focus:border-myColorA transition-all appearance-none cursor-pointer"
+                      >
+                        <option value="Volunteer">Volunteer</option>
+                        <option value="Donor">Donor</option>
+                        <option value="Sponsor">Sponsor</option>
+                        <option value="Beneficiary">Beneficiary</option>
+                      </select>
+                      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-500">
+                        <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" /></svg>
+                      </div>
+                    </div>
+                  </div>
 
-              {submitError && <p className="text-red-600 text-sm">{submitError}</p>}
-
-              <div className="flex flex-col items-center mt-6">
-                <button
-                  type="submit"
-                  disabled={loading || isUploading}
-                  className="w-full py-3 bg-myColorA rounded-md text-white font-medium hover:bg-myColorAB disabled:opacity-50"
-                >
-                  {loading ? "Sending Verification..." : "Continue"}
-                </button>
-
-                <p className="mt-4 text-sm text-gray-600">
-                  Already have an account?{" "}
-                  <Link href="/signin" className="text-myColorA hover:text-myColorAB font-medium">
-                    Sign In
-                  </Link>
-                </p>
-              </div>
-            </form>
-          ) : (
-            <div className="space-y-6">
-              <div className="text-center mb-8">
-                <div className="inline-flex items-center justify-center bg-green-100 rounded-full p-2 mb-4">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-myColorA" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                  </svg>
-                </div>
-                <h2 className="text-2xl font-bold text-gray-800">Verify Your Email</h2>
-                <p className="text-gray-600 mt-2">
-                  We've sent a verification code to <span className="font-medium">{formDataCache?.email}</span>
-                </p>
-              </div>
-
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Enter 6-digit Verification Code</label>
-                  <input
-                    type="text"
-                    value={otp}
-                    onChange={(e) => setOtp(e.target.value.replace(/[^0-9]/g, '').slice(0, 6))}
-                    placeholder="123456"
-                    className="w-full p-3 text-center text-lg tracking-widest rounded border border-gray-300 focus:ring-2 focus:ring-green-500"
-                    maxLength={6}
-                  />
+                  {/* Address */}
+                  <div className="space-y-1.5 md:col-span-2">
+                    <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Address</label>
+                    <div className="relative">
+                      <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
+                      <input
+                        {...register("address")}
+                        type="text"
+                        placeholder="Your full address"
+                        className="w-full pl-9 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-myColorA focus:border-myColorA transition-all placeholder:text-slate-400"
+                      />
+                    </div>
+                  </div>
                 </div>
 
-                {submitError && <p className="text-red-600 text-sm">{submitError}</p>}
-                
-                {isUploading && (
-                  <div className="bg-blue-50 p-3 rounded-md flex items-center">
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-myColorA mr-2"></div>
-                    <p className="text-sm text-blue-800">
-                      Processing your profile image...
-                    </p>
+                {/* Error Message */}
+                {submitError && (
+                  <div className="p-3 bg-red-50 text-red-600 text-sm rounded-lg flex items-center gap-2 border border-red-100">
+                    <AlertCircle className="w-4 h-4" />
+                    {submitError}
                   </div>
                 )}
 
-                <div className="flex flex-col items-center">
+                {/* Submit Button */}
+                <button
+                  type="submit"
+                  disabled={loading || isUploading}
+                  className="w-full py-3 bg-myColorA hover:bg-myColorAB text-white rounded-lg font-bold shadow-lg shadow-myColorA/20 transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed mt-2"
+                >
+                  {loading ? (
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      Processing...
+                    </>
+                  ) : (
+                    <>
+                      Create Account <ArrowRight className="w-5 h-5" />
+                    </>
+                  )}
+                </button>
+
+                <div className="text-center mt-6">
+                  <p className="text-slate-500 text-sm">
+                    Already have an account?{' '}
+                    <Link href="/signin" className="text-myColorA font-semibold hover:underline">
+                      Sign In
+                    </Link>
+                  </p>
+                </div>
+              </form>
+            ) : (
+              // Verification Step UI
+              <div className="space-y-6 animate-in slide-in-from-right-10 duration-300">
+                <div className="flex flex-col items-center justify-center py-6">
+                  <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mb-4 text-myColorA">
+                    <Mail className="w-8 h-8" />
+                  </div>
+                  <h3 className="text-lg font-bold text-slate-800">Check your inbox</h3>
+                  <p className="text-slate-500 text-center max-w-[280px]">
+                    We sent a verification code to <span className="font-semibold text-slate-700">{formDataCache?.email}</span>
+                  </p>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="relative">
+                    <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide block mb-2 text-center">Verification Code</label>
+                    <input
+                      type="text"
+                      value={otp}
+                      onChange={(e) => setOtp(e.target.value.replace(/[^0-9]/g, '').slice(0, 6))}
+                      placeholder="000 000"
+                      className="w-full p-4 text-center text-3xl font-bold tracking-[0.5em] text-slate-800 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-myColorA focus:border-myColorA transition-all placeholder:text-slate-300"
+                      maxLength={6}
+                      autoFocus
+                    />
+                  </div>
+
+                  {submitError && (
+                    <div className="p-3 bg-red-50 text-red-600 text-sm rounded-lg flex items-center gap-2 border border-red-100 justify-center">
+                      <AlertCircle className="w-4 h-4" />
+                      {submitError}
+                    </div>
+                  )}
+
+                  {isUploading && (
+                    <div className="p-3 bg-blue-50 text-blue-700 text-sm rounded-lg flex items-center justify-center gap-2 border border-blue-100">
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Finalizing profile setup...
+                    </div>
+                  )}
+
                   <button
                     onClick={verifyOTP}
                     disabled={loading || isUploading || otp.length !== 6}
-                    className="w-full py-3 bg-myColorA rounded-md text-white font-medium hover:bg-myColorAB disabled:opacity-50"
+                    className="w-full py-3 bg-myColorA hover:bg-myColorAB text-white rounded-lg font-bold shadow-lg shadow-myColorA/20 transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
                   >
-                    {loading ? "Verifying..." : "Complete Registration"}
+                    {loading ? (
+                      <>
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                        Verifying...
+                      </>
+                    ) : (
+                      <>
+                        Verify & Complete <CheckCircle2 className="w-5 h-5" />
+                      </>
+                    )}
+                  </button>
+                </div>
+
+                <div className="flex items-center justify-between pt-4 border-t border-slate-100">
+                  <button
+                    type="button"
+                    onClick={() => setStep("register")}
+                    className="text-sm font-medium text-slate-500 hover:text-slate-800 transition-colors"
+                  >
+                    ← Back to details
                   </button>
 
-                  <div className="flex justify-between w-full mt-4">
-                    <button
-                      type="button"
-                      onClick={() => setStep("register")}
-                      className="text-sm text-gray-600 hover:text-gray-800"
-                    >
-                      ← Back
-                    </button>
-                    <button
-                      type="button"
-                      onClick={resendOTP}
-                      disabled={resendDisabled}
-                      className={`text-sm ${resendDisabled ? 'text-gray-400' : 'text-myColorA hover:text-myColorAB'}`}
-                    >
-                      {resendDisabled ? `Resend in ${countdown}s` : "Resend Code"}
-                    </button>
-                  </div>
+                  <button
+                    type="button"
+                    onClick={resendOTP}
+                    disabled={resendDisabled}
+                    className="text-sm font-medium text-myColorA hover:text-myColorAB disabled:text-slate-400 disabled:cursor-not-allowed transition-colors"
+                  >
+                    {resendDisabled ? `Resend in ${countdown}s` : "Resend Code"}
+                  </button>
                 </div>
               </div>
-            </div>
-          )}
-
-          <p className="mt-8 text-xs text-gray-500 text-center">
-            By signing up, you agree to our Terms of Service and Privacy Policy.
-          </p>
+            )}
+          </div>
         </div>
       </div>
     </div>

@@ -66,7 +66,19 @@ export async function PUT(req) {
 
     const body = await req.json();
 
+    const currentUser = await User.findById(session.user.id);
+
+    if (!currentUser) {
+      return NextResponse.json({ message: "User not found" }, { status: 404 });
+    }
+
     const allowedRoles = ["Donor", "Volunteer", "Sponsor", "Beneficiary"];
+
+    // SECURITY: Only allow 'Admin' role if the user is ALREADY an Admin.
+    // This prevents regular users from elevating themselves, but allows Admins to update their profile without losing status.
+    if (currentUser.memberType === "Admin") {
+      allowedRoles.push("Admin");
+    }
 
     if (!allowedRoles.includes(body.memberType)) {
       return NextResponse.json(
