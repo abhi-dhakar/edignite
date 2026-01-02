@@ -28,8 +28,8 @@ export const authOptions = {
           const errorMessages = result.error.flatten().fieldErrors;
           throw new Error(
             errorMessages.email?.[0] ||
-              errorMessages.password?.[0] ||
-              "Invalid input"
+            errorMessages.password?.[0] ||
+            "Invalid input"
           );
         }
 
@@ -67,7 +67,7 @@ export const authOptions = {
   },
 
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
       if (user) {
         token.id = user.id;
         token.name = user.name;
@@ -75,6 +75,15 @@ export const authOptions = {
         token.image = user.image;
         token.memberType = user.memberType;
       }
+
+      // Handle session updates (e.g., profile image change)
+      if (trigger === "update" && session?.user) {
+        token.name = session.user.name || token.name;
+        token.image = session.user.image || token.image;
+        token.memberType = session.user.memberType || token.memberType;
+        // Keep other fields if needed
+      }
+
       return token;
     },
 
