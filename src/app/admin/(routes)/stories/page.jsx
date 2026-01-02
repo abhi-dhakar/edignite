@@ -171,7 +171,7 @@ export default function AdminStoriesPage() {
         imageUrl = uploadResponse.data.url;
         imagePublicId = uploadResponse.data.publicId;
       }
-e
+
       const response = await axios.post("/api/admin/stories", {
         title: formData.title,
         content: formData.content,
@@ -714,7 +714,7 @@ e
           </DialogFooter>
         </DialogContent>
       </Dialog>
-      
+
     </div>
   );
 }
