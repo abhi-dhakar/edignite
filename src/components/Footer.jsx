@@ -35,10 +35,10 @@ const footerLinks = {
 };
 
 const socialLinks = [
-  { icon: Facebook, href: "#", color: "hover:text-blue-500" },
+  { icon: Facebook, href: "https://www.facebook.com/socialindiagroup.in", color: "hover:text-blue-500" },
   { icon: Twitter, href: "#", color: "hover:text-sky-400" },
-  { icon: Instagram, href: "#", color: "hover:text-pink-500" },
-  { icon: Linkedin, href: "#", color: "hover:text-blue-600" },
+  { icon: Instagram, href: "https://www.instagram.com/ed_ignite", color: "hover:text-pink-500" },
+  { icon: Linkedin, href: "https://www.linkedin.com/company/edignite-ngo", color: "hover:text-blue-600" },
 ];
 
 export default function Footer() {
@@ -48,15 +48,15 @@ export default function Footer() {
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[1px] bg-gradient-to-r from-transparent via-myColorA/50 to-transparent" />
 
       <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 lg:gap-8 text-center">
 
           {/* Column 1: Brand & Mission */}
-          <div className="space-y-6">
+          <div className="space-y-6 flex flex-col items-center">
             <Link href="/" className="flex items-center gap-3 group">
               <div className="h-12 w-12 rounded-xl bg-white shadow-xl flex items-center justify-center p-2 group-hover:scale-110 transition-transform">
                 <img src="/images.png" alt="Edignite Logo" className="w-full h-full object-contain" />
               </div>
-              <div className="flex flex-col">
+              <div className="flex flex-col items-start">
                 <span className="font-black text-2xl tracking-tighter text-white group-hover:text-myColorA transition-colors">
                   EDIGNITE
                 </span>
@@ -68,7 +68,7 @@ export default function Footer() {
             <p className="text-slate-400 font-medium leading-relaxed max-w-sm italic">
               "We believe in the power of collective action to transform lives and protect our planet's future."
             </p>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-4 justify-center">
               {socialLinks.map((social, i) => (
                 <Link
                   key={i}
@@ -82,14 +82,14 @@ export default function Footer() {
           </div>
 
           {/* Column 2: Quick Links */}
-          <div className="lg:pl-8">
+          <div className="flex flex-col items-center">
             <h3 className="text-white font-black uppercase tracking-widest text-sm mb-8 flex items-center gap-2">
               <span className="h-1 w-4 bg-myColorA rounded-full" />
               Quick Links
             </h3>
-            <ul className="space-y-4">
+            <ul className="space-y-4 w-full">
               {footerLinks.quickLinks.map((link) => (
-                <li key={link.label}>
+                <li key={link.label} className="flex justify-center">
                   <Link
                     href={link.href}
                     className="text-slate-400 hover:text-myColorA font-bold flex items-center group transition-colors"
@@ -103,14 +103,14 @@ export default function Footer() {
           </div>
 
           {/* Column 3: Resources */}
-          <div>
+          <div className="flex flex-col items-center">
             <h3 className="text-white font-black uppercase tracking-widest text-sm mb-8 flex items-center gap-2">
               <span className="h-1 w-4 bg-myColorA rounded-full" />
               Resources
             </h3>
-            <ul className="space-y-4">
+            <ul className="space-y-4 w-full">
               {footerLinks.resources.map((link) => (
-                <li key={link.label}>
+                <li key={link.label} className="flex justify-center">
                   <Link
                     href={link.href}
                     className="text-slate-400 hover:text-myColorA font-bold flex items-center group transition-colors"
@@ -123,52 +123,13 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Column 4: Newsletter */}
-          <div className="space-y-8">
-            <div>
-              <h3 className="text-white font-black uppercase tracking-widest text-sm mb-6 flex items-center gap-2">
-                <span className="h-1 w-4 bg-myColorA rounded-full" />
-                Newsletter
-              </h3>
-              <p className="text-sm text-slate-400 font-medium mb-6">
-                Join our mission updates. We'll send hope to your inbox, not spam.
-              </p>
-              <div className="relative group">
-                <Input
-                  placeholder="Enter your email"
-                  className="h-14 bg-slate-900 border-slate-800 text-white rounded-2xl pl-6 pr-14 focus-visible:ring-myColorA/50 focus-visible:border-myColorA transition-all"
-                />
-                <Button
-                  size="icon"
-                  className="absolute right-1 top-1 h-12 w-12 rounded-xl bg-myColorA hover:bg-myColorAB text-white shadow-lg transition-transform hover:scale-105 active:scale-95"
-                >
-                  <Send className="h-5 w-5" />
-                </Button>
-              </div>
-            </div>
-
-            <div className="space-y-4 pt-4 border-t border-slate-900">
-              <div className="flex items-center gap-3 text-sm font-bold text-slate-400 group cursor-pointer hover:text-white transition-colors">
-                <div className="h-8 w-8 rounded-lg bg-slate-900 flex items-center justify-center text-myColorA border border-slate-800">
-                  <Mail className="h-4 w-4" />
-                </div>
-                contact@edignite.org
-              </div>
-              <div className="flex items-center gap-3 text-sm font-bold text-slate-400 group cursor-pointer hover:text-white transition-colors">
-                <div className="h-8 w-8 rounded-lg bg-slate-900 flex items-center justify-center text-myColorA border border-slate-800">
-                  <Phone className="h-4 w-4" />
-                </div>
-                +91 1234 567 890
-              </div>
-            </div>
-          </div>
         </div>
 
         <Separator className="my-12 bg-slate-900" />
 
         <div className="flex flex-col md:flex-row justify-between items-center gap-6">
           <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">
-            © 2025 Edignite NGO. Crafted with <Heart className="h-3 w-3 inline text-red-500 fill-current" /> for humanity.
+            © 2025 Edignite NGO. All rights reserved.
           </p>
           <div className="flex gap-8">
             <Link href="#" className="text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-white transition-colors">Terms of Service</Link>
