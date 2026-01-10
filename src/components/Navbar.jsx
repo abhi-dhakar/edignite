@@ -142,161 +142,17 @@ export default function Navbar() {
           isScrolled ? "shadow-lg shadow-myColorA/5 border-myColorA/10" : "shadow-sm border-gray-100"
         )}
       >
-        <div className="px-4 md:px-8 h-14 md:h-16 flex items-center justify-between relative">
+        <div className="px-4 md:px-8 h-14 md:h-16 flex items-center relative">
 
-          {/* Brand Group */}
-          <Link href="/" className="flex items-center gap-2 md:gap-3 transition-all hover:scale-105 group shrink-0">
-            <div className="h-10 w-10 md:h-11 md:w-11 rounded-xl bg-white shadow-md ring-1 ring-black/5 flex items-center justify-center p-1.5 group-hover:shadow-myColorA/20">
-              <img src="/images.png" alt="logo" className="w-full h-full object-contain" />
-            </div>
-            <div className="flex flex-col select-none">
-              <span className="font-black text-lg md:text-xl tracking-tighter text-myColorAB group-hover:text-myColorA transition-colors">
-                EDIGNITE
-              </span>
-              <p className="hidden sm:block text-[8px] md:text-[9px] font-bold text-myColorA uppercase tracking-[0.3em] -mt-1 opacity-70">hope for others</p>
-            </div>
-          </Link>
-
-          {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center ml-4 gap-0.5">
-            <NavigationMenu className="max-w-none">
-              <NavigationMenuList className="gap-0">
-                {navItems.map((item) => (
-                  <NavigationMenuItem key={item.label}>
-                    <NavigationMenuTrigger className="bg-transparent hover:bg-myColorA/5 data-[state=open]:bg-myColorA/5 font-bold text-sm tracking-tight text-gray-700">
-                      {item.label}
-                    </NavigationMenuTrigger>
-                    <NavigationMenuContent>
-                      <ul className="grid w-[450px] gap-2 p-6 md:w-[550px] md:grid-cols-2 lg:w-[650px] rounded-2xl border-none">
-                        {item.children.map((child) => (
-                          <ListItem
-                            key={child.label}
-                            title={child.label}
-                            href={child.href}
-                          >
-                            {child.description}
-                          </ListItem>
-                        ))}
-                      </ul>
-                    </NavigationMenuContent>
-                  </NavigationMenuItem>
-                ))}
-                <NavigationMenuItem>
-                  <NavigationMenuLink asChild>
-                    <Link href="/success-stories" className={cn(navigationMenuTriggerStyle(), "bg-transparent font-bold")}>
-                      Stories
-                    </Link>
-                  </NavigationMenuLink>
-                </NavigationMenuItem>
-              </NavigationMenuList>
-            </NavigationMenu>
-          </nav>
-
-          {/* Right Section: Actions & Auth */}
-          <div className="flex items-center gap-2 md:gap-4 ml-auto">
-
-            <div className="hidden lg:flex items-center gap-4">
-              <NotificationBell />
-              <Link href="/donate">
-                <Button
-                  className="rounded-full bg-myColorA hover:bg-myColorAB text-white px-6 md:px-8 font-black shadow-lg shadow-myColorA/20 transition-all hover:scale-105 active:scale-95"
-                >
-                  Donate
-                </Button>
-              </Link>
-            </div>
-
-            {!session ? (
-              <div className="flex items-center gap-2 md:gap-3">
-                <Link href="/signin">
-                  <Button variant="ghost" className="hidden sm:inline-flex font-bold text-sm px-4 hover:text-myColorA transition-colors">
-                    Login
-                  </Button>
-                </Link>
-                <Link href="/signup">
-                  <Button className="rounded-full bg-secondary text-secondary-foreground font-black px-5 md:px-8 border-2 border-myColorA/5 hover:bg-secondary/80 shadow-md text-xs md:text-sm h-9 md:h-11 transition-all active:scale-95">
-                    Join
-                  </Button>
-                </Link>
-              </div>
-            ) : (
-              <div className="flex items-center gap-2 md:gap-4">
-                <div className="lg:hidden">
-                  <NotificationBell />
-                </div>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="h-10 w-10 md:h-11 md:w-11 rounded-xl p-0 overflow-hidden ring-2 ring-myColorA/10 hover:ring-myColorA/40 transition-all shadow-inner bg-myColorA/5">
-                      <Avatar className="h-full w-full rounded-none">
-                        <AvatarImage src={session.user?.image} />
-                        <AvatarFallback className="bg-transparent text-myColorA font-black text-base md:text-lg">
-                          {session.user?.name?.[0].toUpperCase()}
-                        </AvatarFallback>
-                      </Avatar>
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-64 mt-4 p-2 shadow-2xl border-myColorA/5 rounded-2xl items-center">
-                    <div className="p-4 mb-2 bg-gradient-to-br from-myColorA/10 to-transparent rounded-xl flex items-center gap-3">
-                      <Avatar className="h-12 w-12 border-2 border-white shadow-md">
-                        <AvatarImage src={session.user?.image} />
-                        <AvatarFallback>{session.user?.name?.[0]}</AvatarFallback>
-                      </Avatar>
-                      <div className="flex flex-col">
-                        <p className="text-sm font-black leading-none">{session.user.name}</p>
-                        <p className="text-[10px] font-bold text-myColorA uppercase mt-1 tracking-widest">{session.user.memberType || "Ambassador"}</p>
-                      </div>
-                    </div>
-                    <div className="px-1 py-1 space-y-1">
-                      {isAdmin && (
-                        <DropdownMenuItem asChild className="focus:bg-emerald-50 text-emerald-800 font-black rounded-lg py-3 cursor-pointer">
-                          <Link href="/admin/dashboard" className="w-full flex items-center">
-                            <UserCircle className="mr-3 h-5 w-5" />
-                            Admin Dashboard
-                          </Link>
-                        </DropdownMenuItem>
-                      )}
-                      <DropdownMenuItem asChild className="font-bold rounded-lg py-3 cursor-pointer group">
-                        <Link href="/profile" className="w-full flex items-center">
-                          <User className="mr-3 h-5 w-5 text-gray-400 group-hover:text-myColorA transition-colors" />
-                          My Profile Space
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem asChild className="font-bold rounded-lg py-3 cursor-pointer group">
-                        <Link href="/profile#donations" className="w-full flex items-center">
-                          <Heart className="mr-3 h-5 w-5 text-red-400 group-hover:text-red-500 transition-colors" />
-                          Impact History
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem asChild className="font-bold rounded-lg py-3 cursor-pointer group">
-                        <Link href="/profile#settings" className="w-full flex items-center">
-                          <Settings className="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-600" />
-                          Preferences
-                        </Link>
-                      </DropdownMenuItem>
-                    </div>
-                    <DropdownMenuSeparator className="mx-2 opacity-50" />
-                    <div className="p-1">
-                      <DropdownMenuItem
-                        className="rounded-lg text-red-600 focus:bg-red-50 focus:text-red-700 cursor-pointer font-black py-3"
-                        onSelect={() => signOut()}
-                      >
-                        <LogOut className="mr-3 h-5 w-5" />
-                        Log Out
-                      </DropdownMenuItem>
-                    </div>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
-            )}
-
-            {/* Mobile hamburger - Moved to right for better accessibility */}
+          {/* Mobile Hamburger & Notifications (Leftmost) */}
+          <div className="flex lg:hidden flex-1 items-center gap-2">
             <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="lg:hidden h-10 w-10 hover:bg-myColorA/10 transition-colors">
-                  <Menu className="h-6 w-6 text-myColorAB" />
+                <Button variant="ghost" size="icon" className="h-12 w-12 hover:bg-myColorA/10 transition-colors">
+                  <Menu className="h-8 w-8 text-myColorAB" />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right" className="w-[300px] p-0 flex flex-col bg-white border-none shadow-2xl">
+              <SheetContent side="left" className="w-[300px] p-0 flex flex-col bg-white border-none shadow-2xl">
                 <div className="p-8 border-b-2 border-myColorA/5 flex flex-col items-center gap-4 bg-gradient-to-b from-myColorA/5 to-white">
                   <div className="h-20 w-20 rounded-2xl bg-white shadow-xl flex items-center justify-center p-3">
                     <img src="/images.png" alt="logo" className="w-full h-full object-contain" />
@@ -380,6 +236,154 @@ export default function Navbar() {
                 </div>
               </SheetContent>
             </Sheet>
+
+            {/* Notification Bell (Mobile Only) - Right of Hamburger */}
+            <NotificationBell />
+          </div>
+
+          {/* Brand Group (Centered on mobile, Left on desktop) */}
+          <div className="flex flex-1 lg:flex-none justify-center lg:justify-start">
+            <Link href="/" className="flex items-center gap-2 md:gap-3 transition-all hover:scale-105 group shrink-0">
+              <div className="h-10 w-10 md:h-11 md:w-11 rounded-xl bg-white shadow-md ring-1 ring-black/5 flex items-center justify-center p-1.5 group-hover:shadow-myColorA/20">
+                <img src="/images.png" alt="logo" className="w-full h-full object-contain" />
+              </div>
+              <div className="flex flex-col select-none">
+                <span className="font-black text-lg md:text-xl tracking-tighter text-myColorAB group-hover:text-myColorA transition-colors">
+                  EDIGNITE
+                </span>
+                <p className="hidden sm:block text-[8px] md:text-[9px] font-bold text-myColorA uppercase tracking-[0.3em] -mt-1 opacity-70">hope for others</p>
+              </div>
+            </Link>
+          </div>
+
+          {/* Desktop Navigation */}
+          <nav className="hidden lg:flex items-center ml-4 gap-0.5">
+            <NavigationMenu className="max-w-none">
+              <NavigationMenuList className="gap-0">
+                {navItems.map((item) => (
+                  <NavigationMenuItem key={item.label}>
+                    <NavigationMenuTrigger className="bg-transparent hover:bg-myColorA/5 data-[state=open]:bg-myColorA/5 font-bold text-sm tracking-tight text-gray-700">
+                      {item.label}
+                    </NavigationMenuTrigger>
+                    <NavigationMenuContent>
+                      <ul className="grid w-[450px] gap-2 p-6 md:w-[550px] md:grid-cols-2 lg:w-[650px] rounded-2xl border-none">
+                        {item.children.map((child) => (
+                          <ListItem
+                            key={child.label}
+                            title={child.label}
+                            href={child.href}
+                          >
+                            {child.description}
+                          </ListItem>
+                        ))}
+                      </ul>
+                    </NavigationMenuContent>
+                  </NavigationMenuItem>
+                ))}
+                <NavigationMenuItem>
+                  <NavigationMenuLink asChild>
+                    <Link href="/success-stories" className={cn(navigationMenuTriggerStyle(), "bg-transparent font-bold")}>
+                      Stories
+                    </Link>
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+              </NavigationMenuList>
+            </NavigationMenu>
+          </nav>
+
+          {/* Right Section: Actions & Auth (Rightmost) */}
+          <div className="flex-1 flex items-center justify-end gap-2 md:gap-4 lg:flex-none lg:ml-auto">
+            {/* Desktop Only Actions */}
+            <div className="hidden lg:flex items-center gap-4">
+              <NotificationBell />
+              <Link href="/donate">
+                <Button
+                  className="rounded-full bg-myColorA hover:bg-myColorAB text-white px-6 md:px-8 font-black shadow-lg shadow-myColorA/20 transition-all hover:scale-105 active:scale-95"
+                >
+                  Donate
+                </Button>
+              </Link>
+            </div>
+
+            {!session ? (
+              <div className="flex items-center gap-2 md:gap-3">
+                <Link href="/signin">
+                  <Button variant="ghost" className="hidden sm:inline-flex font-bold text-sm px-4 hover:text-myColorA transition-colors">
+                    Login
+                  </Button>
+                </Link>
+                <Link href="/signup">
+                  <Button className="rounded-full bg-secondary text-secondary-foreground font-black px-5 md:px-8 border-2 border-myColorA/5 hover:bg-secondary/80 shadow-md text-xs md:text-sm h-9 md:h-11 transition-all active:scale-95">
+                    Join
+                  </Button>
+                </Link>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2 md:gap-4">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="h-10 w-10 md:h-11 md:w-11 rounded-full p-0 overflow-hidden ring-2 ring-myColorA/10 hover:ring-myColorA/40 transition-all shadow-inner bg-myColorA/5">
+                      <Avatar className="h-full w-full">
+                        <AvatarImage src={session.user?.image} />
+                        <AvatarFallback className="bg-transparent text-myColorA font-black text-base md:text-lg">
+                          {session.user?.name?.[0].toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-64 mt-4 p-2 shadow-2xl border-myColorA/5 rounded-2xl items-center">
+                    <div className="p-4 mb-2 bg-gradient-to-br from-myColorA/10 to-transparent rounded-xl flex items-center gap-3">
+                      <Avatar className="h-12 w-12 border-2 border-white shadow-md">
+                        <AvatarImage src={session.user?.image} />
+                        <AvatarFallback>{session.user?.name?.[0]}</AvatarFallback>
+                      </Avatar>
+                      <div className="flex flex-col">
+                        <p className="text-sm font-black leading-none">{session.user.name}</p>
+                        <p className="text-[10px] font-bold text-myColorA uppercase mt-1 tracking-widest">{session.user.memberType || "Ambassador"}</p>
+                      </div>
+                    </div>
+                    <div className="px-1 py-1 space-y-1">
+                      {isAdmin && (
+                        <DropdownMenuItem asChild className="focus:bg-emerald-50 text-emerald-800 font-black rounded-lg py-3 cursor-pointer">
+                          <Link href="/admin/dashboard" className="w-full flex items-center">
+                            <UserCircle className="mr-3 h-5 w-5" />
+                            Admin Dashboard
+                          </Link>
+                        </DropdownMenuItem>
+                      )}
+                      <DropdownMenuItem asChild className="font-bold rounded-lg py-3 cursor-pointer group">
+                        <Link href="/profile" className="w-full flex items-center">
+                          <User className="mr-3 h-5 w-5 text-gray-400 group-hover:text-myColorA transition-colors" />
+                          My Profile Space
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild className="font-bold rounded-lg py-3 cursor-pointer group">
+                        <Link href="/profile#donations" className="w-full flex items-center">
+                          <Heart className="mr-3 h-5 w-5 text-red-400 group-hover:text-red-500 transition-colors" />
+                          Impact History
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild className="font-bold rounded-lg py-3 cursor-pointer group">
+                        <Link href="/profile#settings" className="w-full flex items-center">
+                          <Settings className="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-600" />
+                          Preferences
+                        </Link>
+                      </DropdownMenuItem>
+                    </div>
+                    <DropdownMenuSeparator className="mx-2 opacity-50" />
+                    <div className="p-1">
+                      <DropdownMenuItem
+                        className="rounded-lg text-red-600 focus:bg-red-50 focus:text-red-700 cursor-pointer font-black py-3"
+                        onSelect={() => signOut()}
+                      >
+                        <LogOut className="mr-3 h-5 w-5" />
+                        Log Out
+                      </DropdownMenuItem>
+                    </div>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            )}
           </div>
         </div>
       </motion.div>
